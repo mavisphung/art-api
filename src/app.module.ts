@@ -26,7 +26,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             __dirname + '/**/*.entity{.ts,.js}',
           ],
           // ssl: false,
-          synchronize: true,
+          synchronize: false,
           useUnifiedTopology: true,
           useNewUrlParser: true,
           logging: true,

@@ -2,6 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { IUser } from './entities/user.entity';
+import { ObjectID } from 'typeorm';
+import { Utils } from 'src/shared/shared.util';
 
 @Controller('users')
 export class UsersController {
@@ -13,13 +16,17 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    const users = await this.usersService.findAll();
+    const usersFormatList = Utils.formatUserResponseList(users);
+    return usersFormatList; 
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const found = await this.usersService.findOne(id);
+    const result = Utils.formatUserResponse(found);
+    return result;
   }
 
   @Patch(':id')

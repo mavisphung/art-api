@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MongoRepository, Repository } from 'typeorm';
+import { MongoRepository, ObjectID, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -16,20 +16,32 @@ export class UsersService {
   ) {}
 
   private async isExistedUser(email: string): Promise<boolean> {
-    const found = await this.repo.findOne({ email: email });
+    let found = null;
+    try {
+      found = await this.repo.findOne({
+        where: { email: email }
+      });
+    } catch (err) {
+      console.log(err);
+    }
     return found ? true : false;
   }
 
   async create(createUserDto: CreateUserDto) {
-    const isExistedEmail = this.isExistedUser(createUserDto.email);
+    const isExistedEmail = await this.isExistedUser(createUserDto.email);
     if (isExistedEmail) {
-      throw new AppError(ERROR_CODE.USER_EXISTED, 'Duplicated email');
+      throw new AppError(ERROR_CODE.USER_EXISTED, 'Existed other user using this email');
     }
 
-    
-    let user = new User();
-    user.email = createUserDto.email;
+    const user = new User(
+      createUserDto.email,
+      createUserDto.firstName,
+      createUserDto.lastName,
+      createUserDto.phoneNumber
+    );
     user.uuid = uuid();
+    user.isDeleted = false;
+    user.isActive = true;
     try {
       user.password = await Utils.hash(createUserDto.password, 10);
     } catch (err) {
@@ -39,11 +51,17 @@ export class UsersService {
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.repo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    const found = await this.repo.findOne({
+      where: { uuid: id },
+    });
+    if (!found) {
+      throw new AppError(ERROR_CODE.USER_NOT_FOUND, 'Not found user with id ' + id.toString());
+    }
+    return found;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

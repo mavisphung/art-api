@@ -60,6 +60,7 @@ class AllExceptionsFilter implements ExceptionFilter {
 
   private renderBadRequestError(exception: any, response: any) {
     const error = exception.getResponse();
+    console.log(exception);
     response.status(error.statusCode).send({
       errors: error.message,
       message: ErrorList[ERROR_CODE.PARAM_INVALID].message,
@@ -70,6 +71,7 @@ class AllExceptionsFilter implements ExceptionFilter {
 
   private renderAppError(exception: any, response: any) {
     const error = exception.getErrors();
+    console.log(exception);
     response.status(error.statusCode).send({
       timestamp: new Date().toISOString(),
       errorCode: error.errorCode,
@@ -91,6 +93,7 @@ class AllExceptionsFilter implements ExceptionFilter {
     const errorCode = error.error
       ? error.error.toUpperCase()
       : ERROR_CODE.INTERNAL_SERVER_ERROR;
+    console.log(exception);
     response.status(status).send({
       errorCode: errorCode,
       errors: [message],

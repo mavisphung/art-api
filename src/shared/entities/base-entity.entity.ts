@@ -1,18 +1,19 @@
-import { Column, CreateDateColumn, Generated, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Generated, UpdateDateColumn } from "typeorm";
 
 export abstract class BaseModel {
 
-  @Column()
-  @Generated('uuid')
+  @Column({ unique: true })
   uuid: string;
 
   @CreateDateColumn({
+    name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)'
   })
   createdAt: Date;
 
   @UpdateDateColumn({
+    name: 'updated_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)'
@@ -20,7 +21,7 @@ export abstract class BaseModel {
   updatedAt: Date;
 
   @Column({
-    type: 'boolean',
+    name: 'is_deleted',
     default: () => false
   })
   isDeleted: boolean;
