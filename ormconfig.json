@@ -1,0 +1,14 @@
+{
+  "type": "mongodb",
+  "url": "mongodb+srv://root:root@cluster0.b2s15.mongodb.net/mock-db?retryWrites=true&w=majority",
+  "database": "mock-db",
+  "synchronize": false,
+  "logging": true,
+  "entities": ["src/**/*.entity{.ts,.js}"],
+  "migrations": ["src/migration/*{.ts,.js}"],
+  "cli": {
+    "entitiesDir": "src/entity",
+    "migrationsDir": "src/migration",
+    "subscribersDir": "src/subscriber"
+  }
+}
