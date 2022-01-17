@@ -50,6 +50,8 @@ enum ERROR_CODE {
   INVALID_ORDER_REQUEST_STATUS = 'INVALID_ORDER_REQUEST_STATUS',
   ORDER_REQUEST_NOT_FOUND = 'ORDER_REQUEST_NOT_FOUND',
   GENERAL_ERROR = 'GENERAL_ERROR',
+  NOT_MATCH_PASSWORD = 'NOT_MATCH_PASSWORD',
+  EMAIL_NOT_FOUND = 'EMAIL_NOT_FOUND',
 }
 
 const ErrorList = {
@@ -76,6 +78,10 @@ const ErrorList = {
   [ERROR_CODE.PARAM_INVALID]: {
     statusCode: HttpStatus.BAD_REQUEST,
     message: "Invalid fields"
+  },
+  [ERROR_CODE.NOT_MATCH_PASSWORD]: {
+    statusCode: HttpStatus.NOT_ACCEPTABLE,
+    message: 'Passwords must be matched'
   }
 };
 export { ErrorDetails, ERROR_CODE, ErrorList };

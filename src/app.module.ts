@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './api/users/users.module';
 import { ProductsModule } from './api/products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './api/auth/auth.module';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             __dirname + '/**/*.entity{.ts,.js}',
           ],
           // ssl: false,
-          synchronize: true,
+          synchronize: false,
           useUnifiedTopology: true,
           useNewUrlParser: true,
           logging: true,
@@ -35,6 +36,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     UsersModule,
     ProductsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
