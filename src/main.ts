@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { CustomAuthGuard } from './api/auth/auth.guard';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './shared/error';
 
@@ -13,8 +14,19 @@ async function bootstrap() {
   //Exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
 
+  // Enable cors for front end
+  app.enableCors();
+
+  //Use custom guard to process authenticate user
+  const reflector = app.get(Reflector); // global
+  app.useGlobalGuards(
+    // new JwtAuthGuard(),
+    new CustomAuthGuard(reflector),
+    // new RoleGuard(),
+  );
+
   await app.listen(port);
-  console.log(`App is running on ${port}...`);
+  console.log(`Application is running on ${await app.getUrl()}`);
 }
 
 bootstrap();

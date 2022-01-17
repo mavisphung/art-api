@@ -25,22 +25,14 @@ export class Utils {
 
   static formatUserResponseList(users: User[]): IUser[] {
     const formattedList = users.map(user => {
-      return {
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-        isActive: user.isActive,
-        isDeleted: user.isDeleted,
-        phoneNumber: user.phoneNumber
-      }
+      return this.formatUserResponse(user);
     });
     return formattedList;
   }
 
   static formatUserResponse(user: User): IUser {
     return {
+      _id: user._id.toString(),
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,

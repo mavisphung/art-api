@@ -1,5 +1,6 @@
 import { Exclude } from "class-transformer";
 import { BaseModel } from "src/shared/entities/base-entity.entity";
+import { Role } from "src/shared/roles/role.enum";
 import { Column, Entity, ObjectID, ObjectIdColumn, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -18,7 +19,10 @@ export class User extends BaseModel {
   // id: number;
 
   @ObjectIdColumn()
-  id: ObjectID;
+  _id: ObjectID;
+
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column({
     unique: true
@@ -41,9 +45,13 @@ export class User extends BaseModel {
 
   @Column()
   phoneNumber: string;
+
+  @Column()
+  roles: Role[];
 }
 
 export interface IUser {
+  _id?: string;
   id?: string;
   uuid?: string;
   email: string;

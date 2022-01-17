@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MongoRepository, ObjectID, Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { v4 as uuid } from 'uuid';
 import { Utils } from 'src/shared/shared.util';
 import { AppError, ERROR_CODE } from 'src/shared/error';
+import * as bcrypt from 'bcrypt';
+import { Role } from 'src/shared/roles/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -42,6 +44,7 @@ export class UsersService {
     user.uuid = uuid();
     user.isDeleted = false;
     user.isActive = true;
+    user.roles = [Role.USER];
     try {
       user.password = await Utils.hash(createUserDto.password, 10);
     } catch (err) {
@@ -55,9 +58,7 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const found = await this.repo.findOne({
-      where: { uuid: id },
-    });
+    const found = await this.repo.findOne(id);
     if (!found) {
       throw new AppError(ERROR_CODE.USER_NOT_FOUND, 'Not found user with id ' + id.toString());
     }
@@ -70,5 +71,19 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  findOneByEmail(email: string) {
+    return this.repo.findOne({ email });
+  }
+
+  async validatePassword(plain: string, hashed: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(plain, hashed, (err, same) => {
+        if (err) return new AppError(ERROR_CODE.INVALID_PASSWORD);
+
+        return resolve(same);
+      });
+    });
   }
 }
